@@ -1,4 +1,4 @@
-import { ShoppingCart } from 'lucide-react'
+import { ShoppingCart, Sparkles } from 'lucide-react'
 import toast from 'react-hot-toast'
 import type { Producto } from '@/shared/types'
 import { formatCurrency, truncate } from '@/shared/utils'
@@ -7,6 +7,12 @@ import { QuantityStepper } from '@/features/cart/components/QuantityStepper'
 
 interface ProductCardProps {
   producto: Producto
+  /**
+   * Razón (generada por IA) por la que este producto coincidió con una
+   * búsqueda del buscador inteligente del menú. Si viene, se muestra como
+   * badge sobre la imagen — ver features/ai/components/SmartSearchBar.
+   */
+  aiReason?: string
 }
 
 /**
@@ -14,7 +20,7 @@ interface ProductCardProps {
  * Conectado directamente a useCartStore para manejar su propio estado
  * de "Agregado" y permitir modificar la cantidad inline.
  */
-export function ProductCard({ producto }: ProductCardProps) {
+export function ProductCard({ producto, aiReason }: ProductCardProps) {
   const { items, addItem, updateQuantity } = useCartStore()
 
   // Buscar si el producto ya está en el carrito
@@ -58,6 +64,12 @@ export function ProductCard({ producto }: ProductCardProps) {
 
       {/* Contenido */}
       <div className="flex flex-col flex-1 p-4 gap-2">
+        {aiReason && (
+          <span className="inline-flex items-center gap-1.5 self-start bg-primary/15 border border-primary/30 text-primary text-xs font-medium px-2.5 py-1 rounded-full">
+            <Sparkles size={12} className="shrink-0" />
+            {aiReason}
+          </span>
+        )}
         <h3 className="font-heading font-semibold text-white text-base leading-tight">
           {producto.nombre}
         </h3>

@@ -4,6 +4,8 @@ import { ChevronRight, Star } from 'lucide-react'
 import { useMenu } from '@/features/menu/hooks/useMenu'
 import { ProductCard } from '@/features/menu/components/ProductCard'
 import { ClosedBanner } from '@/features/business-hours/components/ClosedBanner'
+import { ChefSuggestionCard } from '@/features/ai/components/ChefSuggestionCard'
+import { useChefSuggestion } from '@/features/ai/hooks/useChefSuggestion'
 
 /** Skeleton de una tarjeta destacada para el estado de carga en Home */
 function FeaturedSkeleton() {
@@ -23,7 +25,8 @@ function FeaturedSkeleton() {
 }
 
 export default function HomePage() {
-  const { productosDestacados, loading } = useMenu()
+  const { productos, productosDestacados, loading } = useMenu()
+  const { suggestion, loading: loadingSuggestion } = useChefSuggestion()
 
   return (
     <div className="flex flex-col">
@@ -71,6 +74,13 @@ export default function HomePage() {
         {/* Separador ondulado */}
         <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-dark-bg to-transparent" />
       </section>
+
+      {/* ── Sugerencia del Chef (IA) ───────────────────────────────── */}
+      {!loadingSuggestion && suggestion && (
+        <section className="max-w-7xl mx-auto px-4 sm:px-6 pt-4 w-full">
+          <ChefSuggestionCard suggestion={suggestion} productos={productos} />
+        </section>
+      )}
 
       {/* ── Sabores Destacados ─────────────────────────────────────── */}
       <section className="max-w-7xl mx-auto px-4 sm:px-6 py-16 w-full">
