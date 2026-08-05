@@ -3,6 +3,7 @@ import { createBrowserRouter, RouterProvider, Outlet } from 'react-router-dom'
 import { Layout } from '@/shared/components/Layout'
 import { AdminAccessGate } from '@/features/admin/auth/AdminAccessGate'
 import { AdminLayout } from '@/features/admin/components/AdminLayout'
+import { RouteErrorBoundary } from './RouteErrorBoundary'
 
 // Lazy-loaded pages for code splitting (Public)
 const HomePage           = lazy(() => import('@/features/home/pages/HomePage'))
@@ -29,99 +30,108 @@ function PageLoader() {
 }
 
 const router = createBrowserRouter([
-  // PUBLIC ROUTES
   {
-    path: '/',
-    element: (
-      <Layout>
-        <Suspense fallback={<PageLoader />}>
-          <HomePage />
-        </Suspense>
-      </Layout>
-    ),
-  },
-  {
-    path: '/menu',
-    element: (
-      <Layout>
-        <Suspense fallback={<PageLoader />}>
-          <MenuPage />
-        </Suspense>
-      </Layout>
-    ),
-  },
-  {
-    path: '/cart',
-    element: (
-      <Layout>
-        <Suspense fallback={<PageLoader />}>
-          <CartPage />
-        </Suspense>
-      </Layout>
-    ),
-  },
-  {
-    path: '/about',
-    element: (
-      <Layout>
-        <Suspense fallback={<PageLoader />}>
-          <AboutPage />
-        </Suspense>
-      </Layout>
-    ),
-  },
-  {
-    path: '/contact',
-    element: (
-      <Layout>
-        <Suspense fallback={<PageLoader />}>
-          <ContactPage />
-        </Suspense>
-      </Layout>
-    ),
-  },
-  {
-    path: '/privacy',
-    element: (
-      <Layout>
-        <Suspense fallback={<PageLoader />}>
-          <PrivacyPage />
-        </Suspense>
-      </Layout>
-    ),
-  },
-  // ADMIN ROUTES
-  {
-    path: '/admin',
-    element: (
-      <AdminAccessGate>
-        <AdminLayout>
-          <Suspense fallback={<PageLoader />}>
-            <Outlet />
-          </Suspense>
-        </AdminLayout>
-      </AdminAccessGate>
-    ),
+    // Root pathless route: le da a TODAS las rutas hijas un errorElement
+    // compartido (ver RouteErrorBoundary.tsx) sin tener que repetirlo en
+    // cada una. Sin esto, un error en cualquier route (ej. falla al cargar
+    // un chunk lazy) cae en la pantalla genérica de React Router.
+    errorElement: <RouteErrorBoundary />,
     children: [
+      // PUBLIC ROUTES
       {
-        index: true,
-        element: <AdminDashboardPage />,
+        path: '/',
+        element: (
+          <Layout>
+            <Suspense fallback={<PageLoader />}>
+              <HomePage />
+            </Suspense>
+          </Layout>
+        ),
       },
       {
-        path: 'products',
-        element: <ProductsAdminPage />,
+        path: '/menu',
+        element: (
+          <Layout>
+            <Suspense fallback={<PageLoader />}>
+              <MenuPage />
+            </Suspense>
+          </Layout>
+        ),
       },
       {
-        path: 'stock',
-        element: <StockAdminPage />,
+        path: '/cart',
+        element: (
+          <Layout>
+            <Suspense fallback={<PageLoader />}>
+              <CartPage />
+            </Suspense>
+          </Layout>
+        ),
       },
       {
-        path: 'orders',
-        element: <OrdersAdminPage />,
+        path: '/about',
+        element: (
+          <Layout>
+            <Suspense fallback={<PageLoader />}>
+              <AboutPage />
+            </Suspense>
+          </Layout>
+        ),
       },
       {
-        path: 'hours',
-        element: <HoursAdminPage />,
+        path: '/contact',
+        element: (
+          <Layout>
+            <Suspense fallback={<PageLoader />}>
+              <ContactPage />
+            </Suspense>
+          </Layout>
+        ),
+      },
+      {
+        path: '/privacy',
+        element: (
+          <Layout>
+            <Suspense fallback={<PageLoader />}>
+              <PrivacyPage />
+            </Suspense>
+          </Layout>
+        ),
+      },
+      // ADMIN ROUTES
+      {
+        path: '/admin',
+        element: (
+          <AdminAccessGate>
+            <AdminLayout>
+              <Suspense fallback={<PageLoader />}>
+                <Outlet />
+              </Suspense>
+            </AdminLayout>
+          </AdminAccessGate>
+        ),
+        children: [
+          {
+            index: true,
+            element: <AdminDashboardPage />,
+          },
+          {
+            path: 'products',
+            element: <ProductsAdminPage />,
+          },
+          {
+            path: 'stock',
+            element: <StockAdminPage />,
+          },
+          {
+            path: 'orders',
+            element: <OrdersAdminPage />,
+          },
+          {
+            path: 'hours',
+            element: <HoursAdminPage />,
+          },
+        ],
       },
     ],
   },

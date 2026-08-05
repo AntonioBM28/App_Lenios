@@ -3,7 +3,7 @@ import toast from 'react-hot-toast'
 import { useCartStore } from '@/features/cart/store/cartStore'
 import { httpClient } from '@/core/api/httpClient'
 import { ENDPOINTS } from '@/core/api/endpoints'
-import type { DatosEntrega } from '../utils/whatsapp'
+import type { DeliveryFormData } from '../components/DeliveryForm'
 import type { Pedido } from '@/shared/types'
 
 export type CheckoutState = 'idle' | 'processing' | 'success'
@@ -18,7 +18,7 @@ export function useCheckout() {
   const { items, clear } = useCartStore()
   const [status, setStatus] = useState<CheckoutState>('idle')
 
-  const submitOrder = async (datosEntrega: DatosEntrega) => {
+  const submitOrder = async (datosEntrega: DeliveryFormData) => {
     if (items.length === 0) return
 
     setStatus('processing')
@@ -27,6 +27,10 @@ export function useCheckout() {
       // El backend valida disponibilidad/stock real, calcula el total,
       // crea el pedido y arma el mensaje de WhatsApp — es la fuente de
       // verdad única (ya no se genera el mensaje en el cliente).
+      //
+      // consentimientoAceptado es obligatorio en el backend (400 si falta o
+      // es false, ver CreateOrderDto) — es la casilla del Aviso de
+      // Privacidad que el usuario ya marcó en DeliveryForm.
       const { data } = await httpClient.post<CreateOrderResponse>(ENDPOINTS.ORDERS, {
         cliente: {
           nombre: datosEntrega.nombre,
@@ -37,6 +41,7 @@ export function useCheckout() {
           productoId: item.productId,
           cantidad: item.cantidad,
         })),
+        consentimientoAceptado: datosEntrega.consentimiento,
       })
 
       setStatus('success')
