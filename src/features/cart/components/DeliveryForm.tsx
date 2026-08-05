@@ -1,11 +1,21 @@
+import { useState } from 'react'
 import { useForm } from 'react-hook-form'
 import { PrivacyNoticeSummary } from '@/features/privacy/components/PrivacyNoticeSummary'
+import { MapPicker, type MapCoords } from './MapPicker'
 
 export interface DeliveryFormData {
   nombre: string
   telefono: string
   direccion: string
   consentimiento: boolean
+  /**
+   * Coordenadas exactas fijadas a mano en el mapa (MapPicker), opcionales.
+   * Independientes del texto de `direccion` — no se autocompletan entre sí.
+   * Si el usuario no fija un pin, el backend geocodifica `direccion` como
+   * respaldo (ver Nominatim/GeocodeR en el backend).
+   */
+  lat?: number
+  lon?: number
 }
 
 interface DeliveryFormProps {
@@ -19,11 +29,16 @@ export function DeliveryForm({ onSubmit, disabled = false }: DeliveryFormProps) 
     handleSubmit,
     formState: { errors },
   } = useForm<DeliveryFormData>()
+  const [coords, setCoords] = useState<MapCoords | null>(null)
+
+  const handleFormSubmit = handleSubmit((data) =>
+    onSubmit({ ...data, lat: coords?.lat, lon: coords?.lon }),
+  )
 
   return (
     <form
       id="delivery-form"
-      onSubmit={handleSubmit(onSubmit)}
+      onSubmit={handleFormSubmit}
       className="flex flex-col gap-5 p-6 rounded-card bg-dark-card border border-dark-border"
     >
       <h2 className="font-heading font-semibold text-white text-lg border-b border-dark-border pb-3 mb-2">
@@ -118,7 +133,10 @@ export function DeliveryForm({ onSubmit, disabled = false }: DeliveryFormProps) 
           <span className="text-red-400 text-xs">{errors.direccion.message}</span>
         )}
       </div>
-      
+
+      {/* Mapa opcional para fijar la ubicación exacta de entrega */}
+      <MapPicker value={coords} onChange={setCoords} disabled={disabled} />
+
       {/* Consentimiento explícito — casilla NO pre-marcada (Aviso de Privacidad) */}
       <div className="flex flex-col gap-1.5 pt-2 border-t border-dark-border">
         <label className="flex items-start gap-2.5 cursor-pointer select-none">
