@@ -24,4 +24,8 @@ export const ENDPOINTS = {
 
   // Auth
   ADMIN_LOGIN:           '/auth/admin/login',
+
+  // AI (Groq) — buscador inteligente del menú + Sugerencia del Chef
+  AI_SMART_SEARCH:       '/ai/smart-search',
+  AI_CHEF_SUGGESTION:    '/ai/chef-suggestion',
 } as const
