@@ -42,6 +42,12 @@ export function useCheckout() {
           cantidad: item.cantidad,
         })),
         consentimientoAceptado: datosEntrega.consentimiento,
+        // Solo se manda si el usuario fijó un pin en el mapa (MapPicker,
+        // opcional). Si no vienen, el backend geocodifica `direccion` como
+        // respaldo (ver Nominatim en API_Lenios).
+        ...(datosEntrega.lat !== undefined && datosEntrega.lon !== undefined
+          ? { entregaLat: datosEntrega.lat, entregaLon: datosEntrega.lon }
+          : {}),
       })
 
       setStatus('success')
