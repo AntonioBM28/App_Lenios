@@ -25,10 +25,27 @@ export const env = {
  *
  * En desarrollo (DEV) no se valida nada: http://localhost sigue funcionando
  * como siempre.
+ *
+ * Excepción: un build de producción (Vite) que apunta a localhost/127.0.0.1
+ * también se acepta sin HTTPS. Esto ocurre al levantar el contenedor del
+ * frontend con `docker compose up --build` para pruebas locales: Vite marca
+ * el build como PROD aunque nunca salga de la máquina, así que exigir HTTPS
+ * ahí no aporta seguridad real (el tráfico no sale a la red) y solo rompe
+ * las pruebas de contenerización.
  */
+function isLocalHost(url: string): boolean {
+  try {
+    const { hostname } = new URL(url)
+    return hostname === 'localhost' || hostname === '127.0.0.1'
+  } catch {
+    return false
+  }
+}
+
 function validateProductionEnv(): void {
   if (!env.isProd) return
   if (env.apiUrl?.startsWith('https://')) return
+  if (isLocalHost(env.apiUrl)) return
 
   const message =
     `Configuración insegura: VITE_API_URL debe iniciar con "https://" en producción. ` +
