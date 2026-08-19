@@ -7,26 +7,26 @@ export default {
   theme: {
     extend: {
       colors: {
-        primary:   '#F97316',
+        primary: '#2563EB',
         secondary: '#EA580C',
-        wood:      '#7A3E12',
-        beige:     '#D9B382',
-        surface:   '#FFF7ED',
-        'dark-bg':     '#0F0A06',
-        'dark-card':   '#1C110A',
+        wood: '#7A3E12',
+        beige: '#D9B382',
+        surface: '#FFF7ED',
+        'dark-bg': '#0F0A06',
+        'dark-card': '#1C110A',
         'dark-border': '#2E1A0E',
       },
       fontFamily: {
         heading: ['Poppins', 'system-ui', 'sans-serif'],
-        body:    ['Inter', 'system-ui', 'sans-serif'],
+        body: ['Inter', 'system-ui', 'sans-serif'],
       },
       borderRadius: {
         card: '1rem',
-        btn:  '0.5rem',
+        btn: '0.5rem',
       },
       boxShadow: {
         'glow-primary': '0 0 20px rgba(249, 115, 22, 0.3)',
-        'glow-card':    '0 4px 30px rgba(249, 115, 22, 0.1)',
+        'glow-card': '0 4px 30px rgba(249, 115, 22, 0.1)',
       },
     },
   },
